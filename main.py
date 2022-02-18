@@ -16,8 +16,8 @@ from sklearn.metrics import confusion_matrix
 # 1 - warning
 # 2 - mandatory
 # -1 - not used
-class_id_to_new_class_id = {'crosswalk': 2,
-                            'other': 1}
+class_id_to_new_class_id = {'crosswalk': 1,
+                            'other': 0}
 
 def load_data(path, pathImage):
     """
@@ -169,7 +169,8 @@ def evaluate(data):
             real.append(sample['label'])
             if sample['label_pred'] == sample['label']:
                 correct += 1
-                print(sample['filename'] + ' ' + str(sample['vert']))
+                if(sample['label_pred'] == class_id_to_new_class_id['crosswalk']):
+                    print(sample['filename'] + ' ' + str(sample['vert']))
             else:
                 incorrect += 1
     conf_matrix = confusion_matrix(real, eval)
