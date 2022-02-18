@@ -34,7 +34,7 @@ def load_data(path, pathImage):
             label = sign.find('name').text
             if label == 'crosswalk': label = class_id_to_new_class_id[label]
             else: label = class_id_to_new_class_id['other']
-            data.append({'image': cv2.imread(os.path.join(path, image_path)), 'label': label})
+            data.append({'image': cv2.imread(os.path.join(path, image_path)), 'label': label, 'filename': file})
     return data
 
 def learn_bovw(data):
@@ -58,7 +58,6 @@ def learn_bovw(data):
 
     np.save('voc.npy', vocabulary)
 
-
 def extract_features(data):
     """
     Extracts features for given data and saves it as "desc" entry.
@@ -77,7 +76,6 @@ def extract_features(data):
 
     return data
 
-
 def train(data):
     """
     Trains Random Forest classifier.
@@ -91,11 +89,11 @@ def train(data):
         if sample['desc'] is not None:
             descs.append(sample['desc'].squeeze(0))
             labels.append(sample['label'])
+
     rf = RandomForestClassifier()
     rf.fit(descs, labels)
 
     return rf
-
 
 def draw_grid(images, n_classes, grid_size, h, w):
     """
@@ -124,7 +122,6 @@ def draw_grid(images, n_classes, grid_size, h, w):
 
     return image_all
 
-
 def predict(rf, data):
     """
     Predicts labels given a model and saves them as "label_pred" (int) entry for each sample.
@@ -138,7 +135,6 @@ def predict(rf, data):
             predict = rf.predict(sample['desc'])
             sample['label_pred'] = int(predict)
     return data
-
 
 def evaluate(data):
     """
@@ -159,10 +155,10 @@ def evaluate(data):
                 correct += 1
             else:
                 incorrect += 1
+                print(sample['filename'])
 
     print('score = %.3f' % (correct / max(correct + incorrect, 1)))
     return
-
 
 def display(data):
     """
@@ -186,31 +182,30 @@ def display(data):
                 if sample['label_pred'] not in incorr:
                     incorr[sample['label_pred']] = []
                 incorr[sample['label_pred']].append(idx)
-    grid_size = 8
 
-    # sort according to classes
-    corr = dict(sorted(corr.items(), key=lambda item: item[0]))
-    corr_disp = {}
-    for key, samples in corr.items():
-        idxs = random.sample(samples, min(grid_size, len(samples)))
-        corr_disp[key] = [data[idx]['image'] for idx in idxs]
-    # sort according to classes
-    incorr = dict(sorted(incorr.items(), key=lambda item: item[0]))
-    incorr_disp = {}
-    for key, samples in incorr.items():
-        idxs = random.sample(samples, min(grid_size, len(samples)))
-        incorr_disp[key] = [data[idx]['image'] for idx in idxs]
-
-    image_corr = draw_grid(corr_disp, n_classes, grid_size, 800, 600)
-    image_incorr = draw_grid(incorr_disp, n_classes, grid_size, 800, 600)
-
-    cv2.imshow('images correct', image_corr)
-    cv2.imshow('images incorrect', image_incorr)
-    cv2.waitKey()
+    # grid_size = 8
+    # # sort according to classes
+    # corr = dict(sorted(corr.items(), key=lambda item: item[0]))
+    # corr_disp = {}
+    # for key, samples in corr.items():
+    #     idxs = random.sample(samples, min(grid_size, len(samples)))
+    #     corr_disp[key] = [data[idx]['image'] for idx in idxs]
+    # # sort according to classes
+    # incorr = dict(sorted(incorr.items(), key=lambda item: item[0]))
+    # incorr_disp = {}
+    # for key, samples in incorr.items():
+    #     idxs = random.sample(samples, min(grid_size, len(samples)))
+    #     incorr_disp[key] = [data[idx]['image'] for idx in idxs]
+    #
+    # image_corr = draw_grid(corr_disp, n_classes, grid_size, 800, 600)
+    # image_incorr = draw_grid(incorr_disp, n_classes, grid_size, 800, 600)
+    #
+    # cv2.imshow('images correct', image_corr)
+    # cv2.imshow('images incorrect', image_incorr)
+    # cv2.waitKey()
 
     # this function does not return anything
     return
-
 
 def display_dataset_stats(data):
     """
@@ -228,7 +223,6 @@ def display_dataset_stats(data):
     class_to_num = dict(sorted(class_to_num.items(), key=lambda item: item[0]))
     print(class_to_num)
 
-
 def balance_dataset(data, ratio):
     """
     Subsamples dataset according to ratio.
@@ -240,12 +234,11 @@ def balance_dataset(data, ratio):
 
     return sampled_data
 
-
 def main():
     data_train = load_data('train/annotations', 'train/images')
     print('train dataset before balancing:')
     display_dataset_stats(data_train)
-    data_train = balance_dataset(data_train, 1.0)
+    data_train = balance_dataset(data_train, 0.3)
     print('train dataset after balancing:')
     display_dataset_stats(data_train)
 
@@ -257,8 +250,8 @@ def main():
     display_dataset_stats(data_test)
 
     # you can comment those lines after dictionary is learned and saved to disk.
-    print('learning BoVW')
-    learn_bovw(data_train)
+    # print('learning BoVW')
+    # learn_bovw(data_train)
 
     print('extracting train features')
     data_train = extract_features(data_train)
@@ -275,7 +268,6 @@ def main():
     display(data_test)
 
     return
-
 
 if __name__ == '__main__':
     main()
