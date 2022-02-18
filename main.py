@@ -26,11 +26,15 @@ def load_data(path, pathImage):
     @param filename: Filename of csv file with information about samples.
     @return: List of dictionaries, one for every sample, with entries "image" (np.array with image) and "label" (class_id).
     """
-
     data = []
     for file in (os.listdir(path)):
         root = et.parse(os.path.join(path, file)).getroot()
         image_path = os.getcwd() + '\\' + pathImage + '\\' + root[1].text
+        sizeText = ['width', 'height']
+        size = []
+        for param in root.findall('size'):
+            for label in sizeText:
+                size.append(int(param.find(label).text))
         for sign in root.findall('object'):
             label = sign.find('name').text
             if label == 'crosswalk': label = class_id_to_new_class_id[label]
@@ -39,11 +43,12 @@ def load_data(path, pathImage):
             xyx2y2 = []
             for cords in sign.findall('bndbox'):
                 for cl in cordl:
-                    xyx2y2.append(cords.find(cl).text)
+                    xyx2y2.append(int(cords.find(cl).text))
             img = cv2.imread(os.path.join(path, image_path))
-            cropImage = img[int(xyx2y2[1]):int(xyx2y2[3]), int(xyx2y2[0]):int(xyx2y2[2])]
-            cv2.waitKey(0)
-            data.append({'image': cropImage, 'label': label, 'filename': file, 'vert': xyx2y2})
+            if not(float(xyx2y2[3])-float(xyx2y2[1])>0.1*float(size[1]) or float(xyx2y2[2])-float(xyx2y2[0])>0.1*float(size[0])): break
+            else:
+                cropImage = img[xyx2y2[1]:xyx2y2[3], xyx2y2[0]:xyx2y2[2]]
+                data.append({'image': cropImage, 'label': label, 'filename': file, 'vert': xyx2y2})
     return data
 
 def learn_bovw(data):
@@ -162,9 +167,9 @@ def evaluate(data):
             real.append(sample['label'])
             if sample['label_pred'] == sample['label']:
                 correct += 1
+                print(sample['filename'] + ' ' + str(sample['vert']))
             else:
                 incorrect += 1
-                print(sample['filename'] + ' ' + str(sample['vert']))
     conf_matrix = confusion_matrix(real, eval)
     print(conf_matrix)
     print('score = %.3f' % (correct / max(correct + incorrect, 1)))
@@ -274,7 +279,7 @@ def main():
     print('testing on testing dataset')
     data_test = predict(rf, data_test)
     evaluate(data_test)
-    display(data_test)
+    # display(data_test)
 
     return
 
