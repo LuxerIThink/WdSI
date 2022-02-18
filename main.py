@@ -45,7 +45,8 @@ def load_data(path, pathImage):
                 for cl in cordl:
                     xyx2y2.append(int(cords.find(cl).text))
             img = cv2.imread(os.path.join(path, image_path))
-            if not(float(xyx2y2[3])-float(xyx2y2[1])>0.1*float(size[1]) or float(xyx2y2[2])-float(xyx2y2[0])>0.1*float(size[0])): break
+            cropSize = [xyx2y2[2]-xyx2y2[0], xyx2y2[3]-xyx2y2[1]]
+            if not(float(cropSize[0])>0.1*float(size[0]) or float(cropSize[1])>0.1*float(size[1])): break
             else:
                 cropImage = img[xyx2y2[1]:xyx2y2[3], xyx2y2[0]:xyx2y2[2]]
                 data.append({'image': cropImage, 'label': label, 'filename': file, 'vert': xyx2y2})
@@ -161,6 +162,7 @@ def evaluate(data):
     incorrect = 0
     eval = []
     real = []
+    print('name [xmin, xmax, ymin, ymax]')
     for sample in data:
         if sample['desc'] is not None:
             eval.append(sample['label_pred'])
