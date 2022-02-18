@@ -9,6 +9,7 @@ import cv2
 from sklearn.ensemble import RandomForestClassifier
 import pandas
 import xml.etree.ElementTree as et
+from sklearn.metrics import confusion_matrix
 
 # translation of 43 classes to 3 classes:
 # 0 - prohibitory
@@ -39,7 +40,10 @@ def load_data(path, pathImage):
             for cords in sign.findall('bndbox'):
                 for cl in cordl:
                     xyx2y2.append(cords.find(cl).text)
-            data.append({'image': cv2.imread(os.path.join(path, image_path)), 'label': label, 'filename': file, 'vert': xyx2y2})
+            img = cv2.imread(os.path.join(path, image_path))
+            cropImage = img[int(xyx2y2[1]):int(xyx2y2[3]), int(xyx2y2[0]):int(xyx2y2[2])]
+            cv2.waitKey(0)
+            data.append({'image': cropImage, 'label': label, 'filename': file, 'vert': xyx2y2})
     return data
 
 def learn_bovw(data):
@@ -161,7 +165,8 @@ def evaluate(data):
             else:
                 incorrect += 1
                 print(sample['filename'] + ' ' + str(sample['vert']))
-
+    conf_matrix = confusion_matrix(real, eval)
+    print(conf_matrix)
     print('score = %.3f' % (correct / max(correct + incorrect, 1)))
     return
 
@@ -188,26 +193,26 @@ def display(data):
                     incorr[sample['label_pred']] = []
                 incorr[sample['label_pred']].append(idx)
 
-    # grid_size = 8
-    # # sort according to classes
-    # corr = dict(sorted(corr.items(), key=lambda item: item[0]))
-    # corr_disp = {}
-    # for key, samples in corr.items():
-    #     idxs = random.sample(samples, min(grid_size, len(samples)))
-    #     corr_disp[key] = [data[idx]['image'] for idx in idxs]
-    # # sort according to classes
-    # incorr = dict(sorted(incorr.items(), key=lambda item: item[0]))
-    # incorr_disp = {}
-    # for key, samples in incorr.items():
-    #     idxs = random.sample(samples, min(grid_size, len(samples)))
-    #     incorr_disp[key] = [data[idx]['image'] for idx in idxs]
-    #
-    # image_corr = draw_grid(corr_disp, n_classes, grid_size, 800, 600)
-    # image_incorr = draw_grid(incorr_disp, n_classes, grid_size, 800, 600)
-    #
-    # cv2.imshow('images correct', image_corr)
-    # cv2.imshow('images incorrect', image_incorr)
-    # cv2.waitKey()
+    grid_size = 8
+    # sort according to classes
+    corr = dict(sorted(corr.items(), key=lambda item: item[0]))
+    corr_disp = {}
+    for key, samples in corr.items():
+        idxs = random.sample(samples, min(grid_size, len(samples)))
+        corr_disp[key] = [data[idx]['image'] for idx in idxs]
+    # sort according to classes
+    incorr = dict(sorted(incorr.items(), key=lambda item: item[0]))
+    incorr_disp = {}
+    for key, samples in incorr.items():
+        idxs = random.sample(samples, min(grid_size, len(samples)))
+        incorr_disp[key] = [data[idx]['image'] for idx in idxs]
+
+    image_corr = draw_grid(corr_disp, n_classes, grid_size, 800, 600)
+    image_incorr = draw_grid(incorr_disp, n_classes, grid_size, 800, 600)
+
+    cv2.imshow('images correct', image_corr)
+    cv2.imshow('images incorrect', image_incorr)
+    cv2.waitKey()
 
     # this function does not return anything
     return
@@ -242,7 +247,7 @@ def main():
     data_train = load_data('train/annotations', 'train/images')
     print('train dataset before balancing:')
     display_dataset_stats(data_train)
-    data_train = balance_dataset(data_train, 0.3)
+    data_train = balance_dataset(data_train, 1.0)
     print('train dataset after balancing:')
     display_dataset_stats(data_train)
 
@@ -254,8 +259,8 @@ def main():
     display_dataset_stats(data_test)
 
     # you can comment those lines after dictionary is learned and saved to disk.
-    # print('learning BoVW')
-    # learn_bovw(data_train)
+    print('learning BoVW')
+    learn_bovw(data_train)
 
     print('extracting train features')
     data_train = extract_features(data_train)
