@@ -34,7 +34,12 @@ def load_data(path, pathImage):
             label = sign.find('name').text
             if label == 'crosswalk': label = class_id_to_new_class_id[label]
             else: label = class_id_to_new_class_id['other']
-            data.append({'image': cv2.imread(os.path.join(path, image_path)), 'label': label, 'filename': file})
+            cordl = ['xmin', 'ymin', 'xmax', 'ymax']
+            xyx2y2 = []
+            for cords in sign.findall('bndbox'):
+                for cl in cordl:
+                    xyx2y2.append(cords.find(cl).text)
+            data.append({'image': cv2.imread(os.path.join(path, image_path)), 'label': label, 'filename': file, 'vert': xyx2y2})
     return data
 
 def learn_bovw(data):
@@ -155,7 +160,7 @@ def evaluate(data):
                 correct += 1
             else:
                 incorrect += 1
-                print(sample['filename'])
+                print(sample['filename'] + ' ' + str(sample['vert']))
 
     print('score = %.3f' % (correct / max(correct + incorrect, 1)))
     return
@@ -231,7 +236,6 @@ def balance_dataset(data, ratio):
     @return: Subsampled dataset.
     """
     sampled_data = random.sample(data, int(ratio * len(data)))
-
     return sampled_data
 
 def main():
