@@ -4,8 +4,8 @@
 - balansowanie danych treningowych
 - wczytanie danych testowych
 - balansowanie danych testowych
-- generowanie slownika
-- wyciagniecie cech zbioru treningowego
+- generowanie słownika
+- wyciągniecie cech zbioru treningowego
 - trenowanie
 - wyciągnięcie cech zbioru testowego
 - predykcja
@@ -28,7 +28,7 @@ Wczytane parametry dla każdego zdjęcia:
   - koordynaty x i y dwóch przeciwległych wierzchołków prostokąta
 w których znajduje się obiekt na oryginalnym zdjęciu
 
-Parametry zapsiane w zmiennej data dla każdego obiektu:
+Parametry zapisane w zmiennej data dla każdego obiektu:
 - wycięte zdjęcie w którym znajduje się obiekt
 - nazwa obiektu
 - nazwa i ścieżka do pliku
@@ -38,15 +38,15 @@ w których znajduje się obiekt na oryginalnym zdjęciu
 Wykorzystuje charakterystyczne komendy:
 - `os.getcwd()` - zwraca ścieżkę do aktualnego folderu
 - `os.listdir({path})` - zwraca listę plików i folderów w ścieżce
-- `xml.etree.ElementTree.parse{PathAndFileName}` - wczytujuje plik .xml
+- `xml.etree.ElementTree.parse{PathAndFileName}` - wczytuje plik .xml
 - `os.path.join({path}, {filename})` - łączy ścieżkę z nazwą pliku
 - `{xml.etree.ElementTree.parse}.getroot()` - pobiera zawartość pliku .xml
 - `{XMLdata}.findall({name})` - szuka wszystkich korzeni o konkretnej nazwie
 - `{root}.find(label)` - szuka korzenia o konkretnej nazwie
 - `{foundRoot}.text` - zwraca tekst znalezionego korzenia
 - `cv2.imread({PathAndFileName})` - wczytuje obrazek
-- `{img}[{y_min}:{y_max}, {x_min}:{x_max}]` - wyciana zdjęcie
-- `class_id_to_new_class_id` - zamienia slowo na numer
+- `{img}[{y_min}:{y_max}, {x_min}:{x_max}]` - wycina zdjęcie
+- `class_id_to_new_class_id` - zamienia słowo na numer
 
 ## Wyswietlanie danych
 ### "display_dataset_stats"
@@ -63,7 +63,7 @@ data i ich ilości
 
 ## Generowanie slownika
 ### "learn_bovw"
-Generuje i zapisuje slownik przy pomocy opisu stworzonego na podstawie punktów
+Generuje i zapisuje słownik przy pomocy opisu stworzonego na podstawie punktów
 charakterystycznych uzyskanych ze zdjęcia
 
 Wykorzystuje charakterystyczne komendy:
@@ -74,19 +74,19 @@ znaczących (keypoint'ów)
 - `sift.compute({image}, {keypoints})` - funkcja sita tworząca opisy z
 punktów znaczących (keypoint'ów)
 - `{BagOfWords}.add({description})` - dodaje opis do zbioru treningowego
-- `{BagOfWords}.cluster()` - tworzy slownik ze zbioru treningowego
-- `np.save({PathAndFileName}, {vocabulary})` - zapisuje slownik do pliku
+- `{BagOfWords}.cluster()` - tworzy słownik ze zbioru treningowego
+- `np.save({PathAndFileName}, {vocabulary})` - zapisuje słownik do pliku
 - `np.load({PathAndFileName})` - wczytywanie pliku
 
 ## Wyciagniecie cech
 ### "extract_features"
-Generuje opisy na podstawie wczytanego slownika i punktów charaktersystycznych
+Generuje opisy na podstawie wczytanego słownika i punktów charakterystycznych
 uzyskanych ze zdjęć z wczytanego zbioru
 
 Wykorzystuje charakterystyczne komendy:
 - `cv2.FlannBasedMatcher_create()` - tworzenie modułu dopasowującego
 - `cv2.BOWImgDescriptorExtractor({sift}, {matcher})` - tworzenie modułu do tworzenia opisów
-- `{ImageDescriptorExtractor}.setVocabulary({vocabulary})` - zwraca slownik wizualny
+- `{ImageDescriptorExtractor}.setVocabulary({vocabulary})` - zwraca słownik wizualny
 
 ## Trenowanie
 ### "train"
