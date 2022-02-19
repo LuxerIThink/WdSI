@@ -48,6 +48,15 @@ Wykorzystuje charakterystyczne komendy:
 - `{img}[{y_min}:{y_max}, {x_min}:{x_max}]` - wyciana zdjęcie
 - `class_id_to_new_class_id` - zamienia slowo na numer
 
+## Balans danych
+### "balance_dataset"
+Wczytuje losowy zakres danych od 0.0 - 1.0,
+gdzie 0 oznacza 0% zbioru a 1.0 oznacza 100% zbioru
+
+Wykorzystuje charakterystyczne komendy:
+- `random.sample({data}, {amount})` - wybór losowych próbek ze zmiennej 
+data i ich ilości
+
 ## Generowanie slownika
 ### "learn_bovw"
 Generuje i zapisuje slownik przy pomocy opisu stworzonego na podstawie punktów
@@ -102,11 +111,3 @@ w których znajduje się obiekt na oryginalnym zdjęciu
 - zwraca macierz pomyłek
 - zwraca macierz pomylek
 - podaje zgodność predykcji z wartościami adnotacji
-
-## Balans danych
-### "balance_dataset"
-Wczytuje losowy zakres danych od 0.0 - 1.0,
-gdzie 0 oznacza 0% zbioru a 1.0 oznacza 100% zbioru
-
-Wykorzystuje charakterystyczne komendy:
-- `random.sample({data}, {amount})` - wybór losowych próbek z daty i ich ilości
