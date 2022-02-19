@@ -48,6 +48,10 @@ Wykorzystuje charakterystyczne komendy:
 - `{img}[{y_min}:{y_max}, {x_min}:{x_max}]` - wyciana zdjęcie
 - `class_id_to_new_class_id` - zamienia slowo na numer
 
+## Wyswietlanie danych
+### "display_dataset_stats"
+Wyświetla ilość obrazków danego typu dla podanego zbioru
+
 ## Balans danych
 ### "balance_dataset"
 Wczytuje losowy zakres danych od 0.0 - 1.0,
