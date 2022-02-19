@@ -86,7 +86,7 @@ uzyskanych ze zdjęć z wczytanego zbioru
 Wykorzystuje charakterystyczne komendy:
 - `cv2.FlannBasedMatcher_create()` - tworzenie modułu dopasowującego
 - `cv2.BOWImgDescriptorExtractor({sift}, {matcher})` - tworzenie modułu do tworzenia opisów
-- `{ImageDescriptorExtractor}.setVocabulary({vocabulary})` - Zwraca slownik wizualny
+- `{ImageDescriptorExtractor}.setVocabulary({vocabulary})` - zwraca slownik wizualny
 
 ## Trenowanie
 ### "train"
@@ -113,5 +113,4 @@ gdzie znajdują się znaki przejść dla pieszych oraz podaje
 koordynaty x i y dwóch przeciwległych wierzchołków prostokąta
 w których znajduje się obiekt na oryginalnym zdjęciu
 - zwraca macierz pomyłek
-- zwraca macierz pomylek
 - podaje zgodność predykcji z wartościami adnotacji
